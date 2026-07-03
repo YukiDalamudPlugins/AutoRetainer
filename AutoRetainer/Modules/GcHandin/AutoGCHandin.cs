@@ -143,7 +143,7 @@ internal static unsafe class AutoGCHandin
             {
                 if(IsDone(addon))
                 {
-                    var s = $"Automatic handin has been completed";
+                    var s = "Automatic handin has been completed".Loc();
                     DuoLog.Information(s);
                     if(C.GCHandinNotify)
                     {
@@ -175,7 +175,7 @@ internal static unsafe class AutoGCHandin
                                     DebugLog($"Seals: {GetSeals()}/{GetMaxSeals()}, for item {nextItem.Value.Seals} | {ExcelItemHelper.GetName(nextItem.Value.ItemID)}: {has}");
                                     if(!has)
                                     {
-                                        throw new GCHandinInterruptedException($"Item {itemName} was not found in inventory");
+                                        throw new GCHandinInterruptedException("Item ?? was not found in inventory".Loc(itemName));
                                     }
                                     DebugLog($"Handing in item {itemName} for {nextItem.Value.Seals} seals (index={nextItem.Value.Index})");
                                     InvokeHandin(addon, nextItem.Value.Index);
@@ -185,7 +185,7 @@ internal static unsafe class AutoGCHandin
                                     if(FindNextHandinItem(false) == null)
                                     {
                                         GCContinuation.EnqueueDeliveryClose();
-                                        throw new GCHandinInterruptedException("Auto GC handin completed");
+                                        throw new GCHandinInterruptedException("Auto GC handin completed".Loc());
                                     }
                                     else
                                     {
@@ -194,7 +194,7 @@ internal static unsafe class AutoGCHandin
                                         {
                                             GCContinuation.EnqueueInitiation(true);
                                         }
-                                        throw new GCHandinInterruptedException("Too many seals, please spend them");
+                                        throw new GCHandinInterruptedException("Too many seals, please spend them".Loc());
                                     }
                                 }
                             }

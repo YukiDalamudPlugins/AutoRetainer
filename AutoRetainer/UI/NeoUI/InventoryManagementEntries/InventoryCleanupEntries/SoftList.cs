@@ -6,8 +6,8 @@ public class SoftList : InventoryManagemenrBase
     {
         var s = InventoryCleanupCommon.SelectedPlan;
         Builder = InventoryCleanupCommon.CreateCleanupHeaderBuilder()
-            .Section(Name)
-            .TextWrapped("These items, when obtained from Quick Venture will be sold unless they have stacked with the same item.")
+            .Section(Name.Loc())
+            .TextWrapped("These items, when obtained from Quick Venture will be sold unless they have stacked with the same item.".Loc())
             .Widget(() => InventoryManagementCommon.DrawListNew(s.IMAutoVendorSoft))
             .Widget(() =>
             {

@@ -35,18 +35,18 @@ public static unsafe class InventorySpaceManager
             }
             if(Data.GetIMSettings().IMProtectList.Contains(Task.ItemID))
             {
-                DuoLog.Warning($"Item {Task} is protected and won't be sold.");
+                DuoLog.Warning("Item ?? is protected and won't be sold.".Loc(Task.ToString()));
                 return true;
             }
             var slot = inv->Items[Task.Slot];
             if(Task.ItemID != slot.ItemId || slot.ItemId == 0 || slot.Quantity != Task.Quantity)
             {
-                DuoLog.Warning($"Slot contains different item {ExcelItemHelper.GetName(slot.ItemId)}x{slot.Quantity}, should be {Task}");
+                DuoLog.Warning("Slot contains different item ??x??, should be ??".Loc(ExcelItemHelper.GetName(slot.ItemId), slot.Quantity.ToString(), Task.ToString()));
                 return true;
             }
             if(!IsRetainerInventoryLoaded())
             {
-                DuoLog.Warning($"Could not find retainer inventory");
+                DuoLog.Warning("Could not find retainer inventory".Loc());
                 return true;
             }
             if(!IsAgentRetainerActive)

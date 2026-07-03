@@ -83,6 +83,7 @@ public unsafe class AutoRetainer : IDalamudPlugin
         {
             P = this;
             ECommonsMain.Init(pi, this, Module.DalamudReflector);
+            Localization.Init("TraditionalChinese");
 #if CUSTOMCS
             PluginLog.Warning($"Using custom FFXIVClientStructs");
             var gameVersion = DalamudReflector.TryGetDalamudStartInfo(out var ver) ? ver.GameVersion.ToString() : "unknown";
@@ -125,6 +126,7 @@ public unsafe class AutoRetainer : IDalamudPlugin
     {
         EzConfig.Migrate<Config>();
         config = EzConfig.Init<Config>();
+        Localization.Init(C.PluginLanguage == "English" ? null : C.PluginLanguage);
 
         //windows
         WindowSystem = new();
@@ -152,23 +154,22 @@ public unsafe class AutoRetainer : IDalamudPlugin
         };
         Svc.ClientState.Logout += Logout;
         Svc.Condition.ConditionChange += ConditionChange;
-        EzCmd.Add("/autoretainer", CommandHandler, """
-            Open plugin interface
-            /ays - alias for /autoretainer
-            /autoretainer e|enable → Enable plugin
-            /autoretainer d|disable - Disable plugin
-            /autoretainer t|toggle - toggle plugin
-            /autoretainer m|multi - toggle MultiMode
-            /autoretainer relog Character Name@WorldName - relog to the targeted character if configured
-            /autoretainer b|browser - open venture browser
-            /autoretainer expert - toggle expert settings
-            /autoretainer debug - toggle debug menu and verbose output
-            /autoretainer shutdown <hours> [minutes] [seconds] - schedule a game shutdown in this amount of time
-            /autoretainer itemsell - begin selling items to NPC or retainer if possible
-            /autoretainer het - enter nearby own house or apartment if possible
-            /autoretainer reset - reset all pending tasks
-            /autoretainer deliver - deliver expert delivery items
-            """);
+        EzCmd.Add("/autoretainer", CommandHandler,
+            "Open plugin interface".Loc() + "\n" +
+            "/ays - alias for /autoretainer".Loc() + "\n" +
+            "/autoretainer e|enable → Enable plugin".Loc() + "\n" +
+            "/autoretainer d|disable - Disable plugin".Loc() + "\n" +
+            "/autoretainer t|toggle - toggle plugin".Loc() + "\n" +
+            "/autoretainer m|multi - toggle MultiMode".Loc() + "\n" +
+            "/autoretainer relog Character Name@WorldName - relog to the targeted character if configured".Loc() + "\n" +
+            "/autoretainer b|browser - open venture browser".Loc() + "\n" +
+            "/autoretainer expert - toggle expert settings".Loc() + "\n" +
+            "/autoretainer debug - toggle debug menu and verbose output".Loc() + "\n" +
+            "/autoretainer shutdown <hours> [minutes] [seconds] - schedule a game shutdown in this amount of time".Loc() + "\n" +
+            "/autoretainer itemsell - begin selling items to NPC or retainer if possible".Loc() + "\n" +
+            "/autoretainer het - enter nearby own house or apartment if possible".Loc() + "\n" +
+            "/autoretainer reset - reset all pending tasks".Loc() + "\n" +
+            "/autoretainer deliver - deliver expert delivery items".Loc());
         EzCmd.Add("/ays", CommandHandler);
         Svc.Toasts.ErrorToast += Toasts_ErrorToast;
         Svc.Toasts.Toast += Toasts_Toast;
@@ -241,7 +242,7 @@ public unsafe class AutoRetainer : IDalamudPlugin
         if(arguments.EqualsIgnoreCase("debug"))
         {
             config.Verbose = !config.Verbose;
-            DuoLog.Information($"Debug mode {(config.Verbose ? "enabled" : "disabled")}");
+            DuoLog.Information(config.Verbose ? "Debug mode enabled".Loc() : "Debug mode disabled".Loc());
             S.NeoWindow.Reload();
         }
         else if(arguments.EqualsIgnoreCaseAny("e", "enable"))
@@ -280,7 +281,7 @@ public unsafe class AutoRetainer : IDalamudPlugin
         else if(arguments.EqualsIgnoreCaseAny("n", "night"))
         {
             C.NightMode = !C.NightMode;
-            DuoLog.Information($"Night mode {(C.NightMode ? "enabled" : "disabled")}");
+            DuoLog.Information(C.NightMode ? "Night mode enabled".Loc() : "Night mode disabled".Loc());
             if(C.NightMode)
             {
                 if(!MultiMode.Enabled)
@@ -310,7 +311,7 @@ public unsafe class AutoRetainer : IDalamudPlugin
             {
                 C.NightMode = true;
             }
-            DuoLog.Information($"Night mode {(C.NightMode ? "enabled" : "disabled")}");
+            DuoLog.Information(C.NightMode ? "Night mode enabled".Loc() : "Night mode disabled".Loc());
         }
         else if(arguments.EqualsIgnoreCaseAny("s", "settings"))
         {
@@ -333,22 +334,22 @@ public unsafe class AutoRetainer : IDalamudPlugin
             }
             else
             {
-                Notify.Error($"Could not find target character");
+                Notify.Error("Could not find target character".Loc());
             }
         }
         else if(arguments.EqualsIgnoreCase("het"))
         {
-            TaskNeoHET.Enqueue(() => DuoLog.Error("Failed to find suitable house"));
+            TaskNeoHET.Enqueue(() => DuoLog.Error("Failed to find suitable house".Loc()));
         }
         else if(arguments.EqualsIgnoreCase("wet"))
         {
             if(TaskNeoHET.GetWorkshopEntrance() != null)
             {
-                TaskNeoHET.TryEnterWorkshop(() => DuoLog.Error("Failed to enter workshop"));
+                TaskNeoHET.TryEnterWorkshop(() => DuoLog.Error("Failed to enter workshop".Loc()));
             }
             else
             {
-                TaskNeoHET.Enqueue(() => DuoLog.Error("Failed to find suitable house"), true);
+                TaskNeoHET.Enqueue(() => DuoLog.Error("Failed to find suitable house".Loc()), true);
             }
         }
         else if(arguments.EqualsIgnoreCaseAny("itemsell"))
@@ -375,7 +376,7 @@ public unsafe class AutoRetainer : IDalamudPlugin
             }
             else
             {
-                DuoLog.Error($"No valid housing NPC or retainer bell were found, or AutoRetainer is busy, or sale function is disabled");
+                DuoLog.Error("No valid housing NPC or retainer bell were found, or AutoRetainer is busy, or sale function is disabled".Loc());
             }
         }
         else if(arguments.StartsWith("shutdown"))
@@ -385,7 +386,7 @@ public unsafe class AutoRetainer : IDalamudPlugin
             {
                 Shutdown.ShutdownAt = 0;
                 Shutdown.ForceShutdownAt = 0;
-                Svc.Chat.Print("Shutdown timer cleared");
+                Svc.Chat.Print("Shutdown timer cleared".Loc());
             }
             else
             {
@@ -397,11 +398,11 @@ public unsafe class AutoRetainer : IDalamudPlugin
                     if(str.Length > 3) time = time.Add(TimeSpan.FromSeconds(int.Parse(str[3])));
                     if(time.TotalSeconds < 10)
                     {
-                        DuoLog.Error("Timer can't be less than 10 seconds");
+                        DuoLog.Error("Timer can't be less than 10 seconds".Loc());
                     }
                     else
                     {
-                        Svc.Chat.Print($"Shutting down in {time}");
+                        Svc.Chat.Print("Shutting down in ??".Loc(time.ToString()));
                         Shutdown.ShutdownAt = Environment.TickCount64 + (long)time.TotalMilliseconds;
                         Shutdown.ForceShutdownAt = Environment.TickCount64 + (long)time.TotalMilliseconds + 10 * 60 * 1000;
                     }
@@ -442,7 +443,7 @@ public unsafe class AutoRetainer : IDalamudPlugin
         {
             P.TaskManager.Abort();
             SchedulerMain.CharacterPostProcessLocked = false;
-            Notify.Success("Reset completed");
+            Notify.Success("Reset completed".Loc());
         }
         else if(arguments.EqualsIgnoreCase("deliver"))
         {
@@ -746,7 +747,7 @@ public unsafe class AutoRetainer : IDalamudPlugin
                             if(bellBehavior != OpenBellBehavior.Pause_AutoRetainer && IsKeyPressed(C.Suppress) && !CSFramework.Instance()->WindowInactive)
                             {
                                 bellBehavior = OpenBellBehavior.Do_nothing;
-                                Notify.Info($"Open bell action cancelled");
+                                Notify.Info("Open bell action cancelled".Loc());
                             }
                             if(SchedulerMain.PluginEnabled && bellBehavior == OpenBellBehavior.Pause_AutoRetainer)
                             {

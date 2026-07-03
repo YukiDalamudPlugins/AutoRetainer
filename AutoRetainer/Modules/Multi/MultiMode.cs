@@ -52,7 +52,7 @@ internal static unsafe class MultiMode
                 {
                     if(TaskChangeCharacter.Expected.Value.Name != Player.Name || TaskChangeCharacter.Expected.Value.World != Player.HomeWorld)
                     {
-                        DuoLog.Warning($"[ARERRCMM] Character mismatch, expected {TaskChangeCharacter.Expected}, but logged in on {Player.NameWithWorld}. Please report this to developer unless you have manually interfered with login process");
+                        DuoLog.Warning("[ARERRCMM] Character mismatch, expected ??, but logged in on ??. Please report this to developer unless you have manually interfered with login process".Loc(TaskChangeCharacter.Expected.ToString(), Player.NameWithWorld));
                     }
                 }
                 TaskChangeCharacter.Expected = null;
@@ -61,7 +61,7 @@ internal static unsafe class MultiMode
             WriteOfflineData(true, true);
             if(LastLogin == Svc.ClientState.LocalContentId && Active)
             {
-                DuoLog.Error("Multi mode disabled as it have detected duplicate login.");
+                DuoLog.Error("Multi mode disabled as it have detected duplicate login.".Loc());
                 Enabled = false;
             }
             LastLogin = MultiMode.Enabled && !C.MultiWaitOnLoginScreen ? Svc.ClientState.LocalContentId : 0;
@@ -123,7 +123,7 @@ internal static unsafe class MultiMode
                 if(val != 0)
                 {
                     Svc.GameConfig.Set(SystemConfigOption.AutoAfkSwitchingTime, 0u);
-                    DuoLog.Warning($"Your Auto Afk Switching Time option was incompatible with current AutoRetainer configuration and was set to (Never). This is not an error.");
+                    DuoLog.Warning("Your Auto Afk Switching Time option was incompatible with current AutoRetainer configuration and was set to (Never). This is not an error.".Loc());
                 }
             }
         }
@@ -133,7 +133,7 @@ internal static unsafe class MultiMode
                 if(val != 0)
                 {
                     Svc.GameConfig.Set(SystemConfigOption.IdlingCameraAFK, 0u);
-                    DuoLog.Warning($"Your Idling Camera AFK option was incompatible with current AutoRetainer configuration and was set to (Disabled). This is not an error.");
+                    DuoLog.Warning("Your Idling Camera AFK option was incompatible with current AutoRetainer configuration and was set to (Disabled). This is not an error.".Loc());
                 }
             }
         }
@@ -181,7 +181,7 @@ internal static unsafe class MultiMode
                 {
                     data.Enabled = false;
                     data.WorkshopEnabled = false;
-                    DuoLog.Warning("Too many errors, current character is excluded.");
+                    DuoLog.Warning("Too many errors, current character is excluded.".Loc());
                     Interactions.Clear();
                     return;
                 }
@@ -189,7 +189,7 @@ internal static unsafe class MultiMode
                 {
                     Enabled = false;
                     data.WorkshopEnabled = false;
-                    DuoLog.Error("Fatal error. Please report this with logs.");
+                    DuoLog.Error("Fatal error. Please report this with logs.".Loc());
                     Interactions.Clear();
                     return;
                 }
@@ -298,7 +298,7 @@ internal static unsafe class MultiMode
             TaskNeoHET.TryEnterWorkshop(() =>
             {
                 Data.Enabled = false;
-                DuoLog.Error($"Due to absence of retainer bell and failure to find workshop, character is excluded from processing retainers");
+                DuoLog.Error("Due to absence of retainer bell and failure to find workshop, character is excluded from processing retainers".Loc());
                 P.TaskManager.Abort();
             });
         }
@@ -373,17 +373,17 @@ internal static unsafe class MultiMode
                 {
                     z.Preferred = false;
                 }
-                Notify.Warning("Preferred character has been reset");
+                Notify.Warning("Preferred character has been reset".Loc());
             }
         }
         ErrorMessage = string.Empty;
         if(P.TaskManager.IsBusy && !allowFromTaskManager)
         {
-            ErrorMessage = "AutoRetainer is processing tasks";
+            ErrorMessage = "AutoRetainer is processing tasks".Loc();
         }
         else if(SchedulerMain.CharacterPostProcessLocked)
         {
-            ErrorMessage = "Currently in post-processing of character";
+            ErrorMessage = "Currently in post-processing of character".Loc();
         }
         /*else if (data != null && !data.Index.InRange(1, 9))
         {
@@ -395,11 +395,11 @@ internal static unsafe class MultiMode
             {
                 if(IsOccupied())
                 {
-                    ErrorMessage = "Player is occupied";
+                    ErrorMessage = "Player is occupied".Loc();
                 }
                 else if(data != null && data.CID == Svc.ClientState.LocalContentId)
                 {
-                    ErrorMessage = "Targeted player is logged in";
+                    ErrorMessage = "Targeted player is logged in".Loc();
                 }
                 else
                 {
@@ -435,7 +435,7 @@ internal static unsafe class MultiMode
                 }
                 else
                 {
-                    ErrorMessage = "Can not log in now";
+                    ErrorMessage = "Can not log in now".Loc();
                 }
             }
         }
@@ -632,7 +632,7 @@ internal static unsafe class MultiMode
             var seconds = C.AutoLoginDelay - i;
             P.TaskManager.Enqueue(() => Svc.NotificationManager.AddNotification(new()
             {
-                Content = $"Autostart in {seconds}!",
+                Content = "Autostart in ??!".Loc(seconds.ToString()),
                 InitialDuration = TimeSpan.FromSeconds(1),
                 HardExpiry = DateTime.Now.AddSeconds(1),
                 Type = NotificationType.Warning,
@@ -662,7 +662,7 @@ internal static unsafe class MultiMode
                     }
                     else
                     {
-                        DuoLog.Error($"Error during auto login: {error}");
+                        DuoLog.Error("Error during auto login: ??".Loc(error));
                     }
                 }
                 return false;

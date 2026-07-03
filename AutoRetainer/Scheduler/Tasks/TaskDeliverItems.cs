@@ -14,17 +14,17 @@ public unsafe static class TaskDeliverItems
         var gcInfo = GCContinuation.GetGCInfo();
         if(gcInfo == null)
         {
-            Notify.Error("Not employed by a Grand Company");
+            Notify.Error("Not employed by a Grand Company".Loc());
             return;
         }
         if(S.LifestreamIPC.IsBusy()) 
         {
-            Notify.Error("Lifestream is busy");
+            Notify.Error("Lifestream is busy".Loc());
             return;
         }
         if(Utils.IsBusy)
         {
-            Notify.Error("AutoRetainer is busy");
+            Notify.Error("AutoRetainer is busy".Loc());
             return;
         }
         if(Vector3.Distance(gcInfo.Value.Position, Player.Position) > 1f)

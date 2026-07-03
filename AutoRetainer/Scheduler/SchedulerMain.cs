@@ -123,7 +123,7 @@ internal static unsafe class SchedulerMain
                                         DebugLog($"Is last planned venture: {completed}");
                                         if(next == 0)
                                         {
-                                            var t = ($"Next venture ID is zero, planner is to be disabled");
+                                            var t = "Next venture ID is zero, planner is to be disabled".Loc();
                                             if(!completed)
                                             {
                                                 DuoLog.Warning(t);
@@ -258,7 +258,7 @@ internal static unsafe class SchedulerMain
                         {
                             if(EzThrottler.Throttle("CloseRetainerList", 1000))
                             {
-                                DuoLog.Warning($"Your inventory is full");
+                                DuoLog.Warning("Your inventory is full".Loc());
                                 if(MultiMode.Active)
                                 {
                                     DebugLog($"Scheduling retainer list closing (multi mode)");

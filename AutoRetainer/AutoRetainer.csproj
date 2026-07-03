@@ -99,6 +99,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<None Update="LanguageTraditionalChinese.ini">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
 		<None Update="res\autoretainer.png">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>

@@ -10,17 +10,17 @@ public unsafe sealed class AccountWhitelist : NeoUIEntry
 {
     public override void Draw()
     {
-        ImGuiEx.TextWrapped($"You may setup account whitelist. In the event you will log in using non-whitelisted account, AutoRetainer will not record any characters, retainers, or submarines.");
+        ImGuiEx.TextWrapped("You may setup account whitelist. In the event you will log in using non-whitelisted account, AutoRetainer will not record any characters, retainers, or submarines.".Loc());
         if(C.WhitelistedAccounts.Count == 0)
         {
-            ImGuiEx.TextWrapped(EColor.GreenBright, "Current whitelist status: Disabled. To enable, add some account to it.");
+            ImGuiEx.TextWrapped(EColor.GreenBright, "Current whitelist status: Disabled. To enable, add some account to it.".Loc());
         }
         else
         {
-            ImGuiEx.TextWrapped(EColor.YellowBright, "Current whitelist status: Enabled. To disable, remove all accounts from it.");
+            ImGuiEx.TextWrapped(EColor.YellowBright, "Current whitelist status: Enabled. To disable, remove all accounts from it.".Loc());
         }
         
-        if(ImGuiEx.IconButtonWithText(FontAwesomeIcon.UserPlus, "Add current account", enabled: Player.Available))
+        if(ImGuiEx.IconButtonWithText(FontAwesomeIcon.UserPlus, "Add current account".Loc(), enabled: Player.Available))
         {
             C.WhitelistedAccounts.Add(*P.Memory.MyAccountId);
         }
@@ -33,7 +33,7 @@ public unsafe sealed class AccountWhitelist : NeoUIEntry
                 new TickScheduler(() => C.WhitelistedAccounts.Remove(x));
             }
             ImGui.SameLine();
-            ImGuiEx.TextV($"Account {x}");
+            ImGuiEx.TextV("Account ??".Loc(x));
             ImGui.PopID();
         }
     }

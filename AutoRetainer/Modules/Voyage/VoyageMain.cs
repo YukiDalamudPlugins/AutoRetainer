@@ -29,7 +29,7 @@ internal static unsafe class VoyageMain
             var txt = message.GetText();
             if(txt == Lang.VoyageInventoryError)
             {
-                DuoLog.Warning($"[Voyage] Your inventory is full!");
+                DuoLog.Warning("[Voyage] Your inventory is full!".Loc());
                 VoyageScheduler.Enabled = false;
                 P.TaskManager.Abort();
                 P.TaskManager.Enqueue(VoyageScheduler.SelectQuitVesselSelectorMenu);
@@ -47,7 +47,7 @@ internal static unsafe class VoyageMain
             if(txt.ContainsAny(StringComparison.OrdinalIgnoreCase, Lang.UnableToRepairVessel))
             {
                 TaskRepairAll.Abort = true;
-                DuoLog.Warning($"[Voyage] You are out of repair components!");
+                DuoLog.Warning("[Voyage] You are out of repair components!".Loc());
                 if(C.FailureNoRepair == WorkshopFailAction.ExcludeVessel)
                 {
                     Data.GetEnabledVesselsData(TaskRepairAll.Type).Remove(TaskRepairAll.Name);
@@ -84,7 +84,7 @@ internal static unsafe class VoyageMain
                     //Notify.Info($"Entered voyage panel");
                     if(IsKeyPressed(C.Suppress))
                     {
-                        Notify.Warning("No operation was requested by user");
+                        Notify.Warning("No operation was requested by user".Loc());
                     }
                     else
                     {
@@ -97,7 +97,7 @@ internal static unsafe class VoyageMain
                             }
                             else
                             {
-                                Notify.Warning($"Warning!\nDeployables were not enabled as there are nothing to process yet");
+                                Notify.Warning("Warning!\nDeployables were not enabled as there are nothing to process yet".Loc());
                             }
                         }
                     }
@@ -271,7 +271,7 @@ internal static unsafe class VoyageMain
                                         }
                                         else
                                         {
-                                            DuoLog.Error($"Invalid plan selected (Points.Count={plan.Points.Count})");
+                                            DuoLog.Error("Invalid plan selected (Points.Count=??)".Loc(plan.Points.Count.ToString()));
                                         }
                                     }
                                     else if(adata.VesselBehavior == VesselBehavior.Redeploy)
