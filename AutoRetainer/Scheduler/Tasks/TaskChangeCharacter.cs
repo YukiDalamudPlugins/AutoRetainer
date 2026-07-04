@@ -106,6 +106,26 @@ public static unsafe class TaskChangeCharacter
         return false;
     }
 
+    /// <summary>
+    /// When re-logging into another character, another plugin may trigger a "lost connection to the server"
+    /// error dialog (e.g. error 90002) that pops up before the title menu is reachable. This is the title screen
+    /// error code window ("Dialogue" addon) which blocks "Start Game"/DC selection, so we dismiss it here while
+    /// waiting for the title menu to appear. Returns true if such a dialog was present (and a dismissal was attempted).
+    /// </summary>
+    public static bool TryCloseConnectionErrorDialog()
+    {
+        if(TryGetAddonMaster<AddonMaster.Dialogue>(out var ok) && ok.IsAddonReady && ok.IsVisible)
+        {
+            if(Utils.GenericThrottle && EzThrottler.Throttle("CloseConnectionErrorDialog"))
+            {
+                PluginLog.Information($"Closing title screen error dialog before login");
+                ok.Ok();
+            }
+            return true;
+        }
+        return false;
+    }
+
     public static bool? ClickSelectDataCenter()
     {
         if(TryGetAddonByName<AtkUnitBase>("TitleDCWorldMap", out var addon) && addon->IsVisible)
@@ -114,6 +134,7 @@ public static unsafe class TaskChangeCharacter
             Utils.RethrottleGeneric();
             return true;
         }
+        if(TryCloseConnectionErrorDialog()) return false;
         if(TryGetAddonMaster<AddonMaster._TitleMenu>(out var m) && m.IsReady)
         {
             if(Utils.GenericThrottle && EzThrottler.Throttle("ClickTitleMenuStart"))
@@ -137,6 +158,7 @@ public static unsafe class TaskChangeCharacter
             Utils.RethrottleGeneric();
             return true;
         }
+        if(TryCloseConnectionErrorDialog()) return false;
         if(TryGetAddonMaster<AddonMaster._TitleMenu>(out var m) && m.IsReady)
         {
             if(Utils.GenericThrottle && EzThrottler.Throttle("ClickTitleMenuStart"))
